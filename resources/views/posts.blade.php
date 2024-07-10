@@ -6,6 +6,12 @@
         <div class="py-4 px-4 mx-auto max-w-screen-xl lg:py-4 lg:px-6">
             <div class="mx-auto max-w-screen-md sm:text-center">
                 <form>
+                    @if (request('category'))
+                        <input type="hidden" name="category" value="{{ request('category') }}">
+                    @endif
+                    @if (request('author'))
+                        <input type="hidden" name="author" value="{{ request('author') }}">
+                    @endif
                     <div class="items-center mx-auto mb-3 space-y-4 max-w-screen-sm sm:flex sm:space-y-0">
                         <div class="relative w-full">
                             <label for="search"
@@ -33,12 +39,13 @@
                 </form>
             </div>
         </div>
+        {{ $posts->links() }}
 
-        <div class="grid gap-8 lg:grid-cols-3 md:grid-cols-2    ">
-            @foreach ($posts as $post)
+        <div class="my-4 grid gap-8 lg:grid-cols-3 md:grid-cols-2 ">
+            @forelse ($posts as $post)
                 <article
                     class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-                    <a href="/categories/{{ $post->category->slug }}">
+                    <a href="/posts?category={{ $post->category->slug }}">
                         <div class="flex justify-between items-center mb-5 text-gray-500">
                             <span
                                 class="bg-{{ $post->category->color }}-100 text-primary-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-primary-200 dark:text-primary-800">
@@ -51,13 +58,14 @@
                         <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                             {{ $post['title'] }}</h2>
                     </a>
-                    <p class="mb-5 font-light text-gray-500 dark:text-gray-400">{{ Str::limit($post['body'], 150) }}</p>
+                    <p class="mb-5 font-light text-gray-500 dark:text-gray-400">{{ Str::limit($post['body'], 150) }}
+                    </p>
                     <div class="flex justify-between items-center">
                         <div class="flex items-center space-x-3">
                             <img class="w-7 h-7 rounded-full"
                                 src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png"
                                 alt="{{ $post->author->name }}" />
-                            <a href="/authors/{{ $post->author->username }}">
+                            <a href="/posts?author={{ $post->author->username }}">
                                 <span class="font-medium text-sm  dark:text-white">
                                     {{ $post->author->name }}
                                 </span>
@@ -75,8 +83,14 @@
                         </a>
                     </div>
                 </article>
-            @endforeach
+            @empty
+                <div class="">
+                    <p class="font-semibold text-xl my-4">404 article not found</p>
+                    <a href="/post" class= " block text-primary-6000 hover:underline">&laquo; Back to all posts</a>
+                </div>
+            @endforelse
         </div>
+        {{ $posts->links() }}
     </div>
 
 </x-layout>

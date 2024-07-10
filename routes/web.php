@@ -20,8 +20,9 @@ Route::get('/contact', function () {
 });
 Route::get('/posts', function () {
     // $posts = Post::with(['author', 'category'])->latest()->get();
-    $posts = Post::latest()->get();
-    return view('posts', ['title' => 'Blog Page', 'posts' => $posts]);
+
+
+    return view('posts', ['title' => 'Blog Page', 'posts' => Post::filter(request(['search', 'category', 'author']))->latest()->paginate(5)->withQueryString()]);
 });
 Route::get('/about', function () {
     return view('about', ['title' => 'About Page']);
